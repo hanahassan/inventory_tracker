@@ -25,6 +25,7 @@ export default function Home() {
   const [updateItemName, setUpdateItemName] = useState("");
   const [updateQuantityNumber, setUpdateQuantityNumber] = useState("");
 
+  const [searchQuery, setSearchQuery] = useState("");
 
   const updateInventory = async () => {
     const snapshot = query(collection(firestore, "inventory"));
@@ -38,8 +39,7 @@ export default function Home() {
     });
     setInventory(inventoryList);
 
-    // Adjust the container height based on the number of items
-    const newHeight = Math.min(50 + inventoryList.length * 50, 300); // Increase height by 50px per item, max 300px
+    const newHeight = Math.min(50 + inventoryList.length * 50, 300);
     setContainerHeight(newHeight);
   };
 
@@ -60,8 +60,7 @@ export default function Home() {
   };
 
   const addItem = async (item, quantityToAdd) => {
-
-    const itemUpp = item.charAt(0).toUpperCase() + item.slice(1)
+    const itemUpp = item.charAt(0).toUpperCase() + item.slice(1);
     const docRef = doc(collection(firestore, "inventory"), itemUpp);
     const docSnap = await getDoc(docRef);
 
@@ -80,24 +79,24 @@ export default function Home() {
   const updateItem = async (item, quantityToAdd) => {
     const itemUpp = item.charAt(0).toUpperCase() + item.slice(1);
     const quantityToAddNum = Number(quantityToAdd);
-  
+
     const docRef = doc(collection(firestore, "inventory"), itemUpp);
     const docSnap = await getDoc(docRef);
-  
+
     if (docSnap.exists()) {
       await setDoc(docRef, { quantity: quantityToAddNum, name: itemUpp });
     }
-  
+
     await updateInventory();
-  };  
+  };
 
   const handleUpdateOpen = (name, quantity) => {
     setUpdateItemName(name);
     setUpdateQuantityNumber(quantity);
     setUpdateOpen(true);
   };
+
   const handleUpdateClose = () => setUpdateOpen(false);
-  
 
   useEffect(() => {
     updateInventory();
@@ -105,6 +104,10 @@ export default function Home() {
 
   const handleOpen = () => setOpen(true);
   const handleClose = () => setOpen(false);
+
+  const filteredInventory = inventory.filter(({ name }) =>
+    name.toLowerCase().includes(searchQuery.toLowerCase())
+  );
 
   return (
     <Box width="100vw" height="100vh" display="flex" flexDirection="column" bgcolor="#090b24">
@@ -117,17 +120,42 @@ export default function Home() {
         alignItems="center"
         justifyContent="center"
         flexGrow={1}
-        mt={8} // Adjust this margin to fit your NavBar height
+        mt={8}
       >
         <Box width="1000px" height="100px" bgcolor="#13162e" display="flex" alignItems="center" justifyContent="space-between" px={5} border='1px solid #333'>
           <Typography variant="h3" color='#bfbfbf'>Inventory Items</Typography>
-          <Button 
-              variant="contained"
-              sx={{ backgroundColor: '#464682' }}
-              onClick={() => {
-                handleOpen();
-              }}>Add New Item</Button> 
+          <Button
+            variant="contained"
+            sx={{ backgroundColor: '#464682' }}
+            onClick={handleOpen}
+          >
+            Add New Item
+          </Button>
         </Box>
+        <TextField
+          variant="outlined"
+          placeholder="Search Items"
+          value={searchQuery}
+          onChange={(e) => setSearchQuery(e.target.value)}
+          sx={{
+            mt: 2,
+            width: "1000px",
+            "& .MuiOutlinedInput-root": {
+              "& fieldset": {
+                borderColor: "#2e2e2e",
+              },
+              "&:hover fieldset": {
+                borderColor: "#2e2e2e",
+              },
+              "&.Mui-focused fieldset": {
+                borderColor: "#2e2e2e",
+              },
+            },
+            "& .MuiInputBase-input::placeholder": {
+              color: "grey",
+            },
+          }}
+        />
         <Modal open={open} onClose={handleClose}>
           <Box
             position="absolute"
@@ -150,31 +178,30 @@ export default function Home() {
                 fullWidth
                 inputProps={{ maxLength: 15 }}
                 value={itemName}
-                onChange={(e) => {
-                  setItemName(e.target.value);
-                }}>
-              </TextField>
+                onChange={(e) => setItemName(e.target.value)}
+              />
               <TextField
                 variant="outlined"
                 fullWidth
                 type="number"
                 inputProps={{ min: 1 }}
                 value={quantityNumber}
-                onChange={(e) => {
-                  setQuantityNumber(e.target.value);
-                }}>
-              </TextField>
-              <Button 
+                onChange={(e) => setQuantityNumber(e.target.value)}
+              />
+              <Button
                 variant="outlined"
                 onClick={() => {
                   addItem(itemName, quantityNumber);
                   setItemName('');
-                  setQuantityNumber(1)
+                  setQuantityNumber(1);
                   handleClose();
-                }}>Add</Button>
+                }}
+              >
+                Add
+              </Button>
             </Stack>
           </Box>
-        </Modal> 
+        </Modal>
         <Modal open={updateOpen} onClose={handleUpdateClose}>
           <Box
             position="absolute"
@@ -197,9 +224,7 @@ export default function Home() {
                 fullWidth
                 inputProps={{ maxLength: 15 }}
                 value={updateItemName}
-                onChange={(e) => {
-                  setUpdateItemName(e.target.value);
-                }}
+                onChange={(e) => setUpdateItemName(e.target.value)}
               />
               <TextField
                 variant="outlined"
@@ -207,11 +232,9 @@ export default function Home() {
                 type="number"
                 inputProps={{ min: 1 }}
                 value={updateQuantityNumber}
-                onChange={(e) => {
-                  setUpdateQuantityNumber(Number(e.target.value));
-                }}
+                onChange={(e) => setUpdateQuantityNumber(Number(e.target.value))}
               />
-              <Button 
+              <Button
                 variant="outlined"
                 onClick={() => {
                   updateItem(updateItemName, updateQuantityNumber);
@@ -228,16 +251,11 @@ export default function Home() {
             <Typography variant='h4' color='#bfbfbf' textAlign='center'>
               Item
             </Typography>
-            <Typography variant='h4' color='#bfbfbf' textAlign='center' >
+            <Typography variant='h4' color='#bfbfbf' textAlign='center'>
               Quantity
             </Typography>
           </Box>
-          <Box
-            width={1000}
-            height="5px"
-            bgcolor="#090b24"
-            mb={2}>
-          </Box>
+          <Box width={1000} height="5px" bgcolor="#090b24" mb={2}></Box>
           <Stack
             width='1000px'
             height={containerHeight}
@@ -245,7 +263,7 @@ export default function Home() {
             overflow="auto"
             sx={{ transition: "height 0.5s ease-in-out" }}
           >
-            {inventory.map(({ name, quantity }) => (
+            {filteredInventory.map(({ name, quantity }) => (
               <Box key={name} width="100%" minHeight="50px" display="flex" alignItems="center" justifyContent="space-between" bgcolor='#13162e' px={5}>
                 <Typography variant='h5' color='#919191' textAlign='center' width="1px">
                   {name.charAt(0).toUpperCase() + name.slice(1)}
@@ -254,35 +272,32 @@ export default function Home() {
                   {quantity}
                 </Typography>
                 <Stack direction="row" spacing={2}>
-                  <Button 
-                    variant="contained" 
+                  <Button
+                    variant="contained"
                     sx={{ backgroundColor: '#464682' }}
-                    onClick={() => {
-                      addItem(name, 1);
-                    }} >
-                      Add
+                    onClick={() => addItem(name, 1)}
+                  >
+                    Add
                   </Button>
-                  <Button 
-                    variant="contained" 
+                  <Button
+                    variant="contained"
                     sx={{ backgroundColor: '#464682' }}
-                    onClick={() => {
-                      removeItem(name);
-                    }} >
-                      Remove
+                    onClick={() => removeItem(name)}
+                  >
+                    Remove
                   </Button>
-                  <Button 
-                    variant="contained" 
+                  <Button
+                    variant="contained"
                     sx={{ backgroundColor: '#464682' }}
-                    onClick={() => {
-                      handleUpdateOpen(name, quantity);
-                    }} >
-                      Update
+                    onClick={() => handleUpdateOpen(name, quantity)}
+                  >
+                    Update
                   </Button>
                 </Stack>
               </Box>
             ))}
           </Stack>
-        </Box>  
+        </Box>
       </Box>
     </Box>
   );
