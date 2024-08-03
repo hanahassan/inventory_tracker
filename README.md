@@ -1,36 +1,37 @@
-This is a [Next.js](https://nextjs.org/) project bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).
 
-## Getting Started
+# Inventory Tracker Project
 
-First, run the development server:
+Hello everyone!
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
-```
+This is my second project for the Headstarter Fellowship. In this project, I showcase a variety of features and functionalities that I implemented, aiming to create a comprehensive and efficient inventory tracking system.
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+## Features
 
-You can start editing the page by modifying `app/page.js`. The page auto-updates as you edit the file.
+- **Next.js**: Utilized for server-side rendering and static site generation to improve performance and SEO.
+- **Firebase**: Integrated for real-time database management and user authentication.
+- **Material-UI**: Implemented for a responsive and modern user interface.
+- **React-Camera-Pro**: Used to capture and upload images directly within the app.
+- **Google Cloud**: Leveraged for scalable cloud computing and storage solutions.
+- **Vercel**: Deployed the application for seamless and reliable hosting.
 
-This project uses [`next/font`](https://nextjs.org/docs/basic-features/font-optimization) to automatically optimize and load Inter, a custom Google Font.
+## Learning Outcomes
 
-## Learn More
+Through this project, I enhanced my skills in:
+- Building dynamic web applications using Next.js.
+- Managing real-time data with Firebase.
+- Designing user-friendly interfaces with Material-UI.
+- Integrating camera functionalities in React apps.
+- Utilizing Google Cloud services for backend solutions.
+- Deploying applications with Vercel for production.
 
-To learn more about Next.js, take a look at the following resources:
+## Live Demo
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+Check out the live demo of the project here:
+[Inventory Tracker](https://inventory-tracker-ruddy.vercel.app)
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js/) - your feedback and contributions are welcome!
+## GitHub Repository
 
-## Deploy on Vercel
+Explore the code and contribute to the project on GitHub you can run it with `npm run dev`:
+[Inventory Tracker Repository](https://github.com/hanahassan/inventory_tracker)
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/deployment) for more details.
+Feel free to reach out if you have any questions or suggestions!
