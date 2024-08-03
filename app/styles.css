@@ -1,0 +1,6 @@
+.small-image {
+    width: 1px;  
+    height: 1px; /* Set the desired height */
+    object-fit: cover; /* Ensure the image scales properly */
+  }
+  
