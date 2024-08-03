@@ -63,12 +63,15 @@ export default function Home() {
     const docRef = doc(collection(firestore, "inventory"), item);
     const docSnap = await getDoc(docRef);
 
+    const data = docSnap.data();
+    const existingImageUrl = data.imageUrl; // Preserve existing image URL
+
     if (docSnap.exists()) {
       const { quantity } = docSnap.data();
       if (quantity === 1) {
         await deleteDoc(docRef);
       } else {
-        await setDoc(docRef, { quantity: quantity - 1 });
+        await setDoc(docRef, { quantity: quantity - 1, imageUrl: existingImageUrl });
       }
     }
 
@@ -103,11 +106,14 @@ export default function Home() {
 
     const quantityToAddNum = Number(quantityToAdd);
 
+    const data = docSnap.data();
+    const existingImageUrl = data.imageUrl; // Preserve existing image URL
+
     if (docSnap.exists()) {
       const { quantity } = docSnap.data();
-      await setDoc(docRef, { quantity: quantity + quantityToAddNum });
+      await setDoc(docRef, { quantity: quantity + quantityToAddNum, imageUrl: existingImageUrl  });
     } else {
-      await setDoc(docRef, { quantity: quantityToAddNum });
+      await setDoc(docRef, { quantity: quantityToAddNum, imageUrl: existingImageUrl });
     }
 
     await updateInventory();
@@ -162,8 +168,6 @@ export default function Home() {
     setUpdateQuantityNumber("");
     await updateInventory();
   };
-   
-  
 
   const handleUpdateOpen = (name, quantity) => {
     setOldItemName(name);
