@@ -83,8 +83,12 @@ export default function Home() {
     const quantityToAddNum = Number(quantityToAdd);
 
     if (docSnap.exists()) {
-      const { quantity } = docSnap.data();
-      await setDoc(docRef, { quantity: quantity + quantityToAddNum, imageUrl });
+      const data = docSnap.data();
+      const updatedQuantity = (data.quantity || 0) + quantityToAddNum;
+      const existingImageUrl = data.imageUrl; // Preserve existing image URL
+  
+      // Update document with new quantity and existing image URL
+      await setDoc(docRef, { quantity: updatedQuantity, imageUrl: existingImageUrl });
     } else {
       await setDoc(docRef, { quantity: quantityToAddNum, imageUrl });
     }
@@ -112,47 +116,53 @@ export default function Home() {
   const updateItem = async (olditem, item, quantityToAdd) => {
     const itemUpp = item.charAt(0).toUpperCase() + item.slice(1);
     const quantityToAddNum = Number(quantityToAdd);
-  
+    
     // Reference to the old document
     const oldDocRef = doc(collection(firestore, "inventory"), olditem);
-  
+    
     // Get the old document data
     const oldDocSnap = await getDoc(oldDocRef);
-  
+    
     if (!oldDocSnap.exists()) {
       console.error(`Document with ID ${olditem} does not exist.`);
       return;
     }
-  
+    
     // Extract imageUrl from the old document data
     const { imageUrl } = oldDocSnap.data() || {};
   
-    if (olditem !== itemUpp) {
-      // Create a new document with the updated item name
-      const newDocRef = doc(collection(firestore, "inventory"), itemUpp);
-      await setDoc(newDocRef, {
-        quantity: quantityToAddNum,
-        name: itemUpp,
-        imageUrl: imageUrl,
-      });
-  
-      // Delete the old document
+    if (quantityToAddNum === 0) {
+      // Delete the item if quantity to add is 0
       await deleteDoc(oldDocRef);
     } else {
-      // If item name hasn't changed, just update the quantity
-      await setDoc(oldDocRef, {
-        quantity: quantityToAddNum,
-        name: itemUpp,
-        imageUrl: imageUrl,
-      }, { merge: true });
+      if (olditem !== itemUpp) {
+        // Create a new document with the updated item name
+        const newDocRef = doc(collection(firestore, "inventory"), itemUpp);
+        await setDoc(newDocRef, {
+          quantity: quantityToAddNum,
+          name: itemUpp,
+          imageUrl: imageUrl,
+        });
+    
+        // Delete the old document
+        await deleteDoc(oldDocRef);
+      } else {
+        // If item name hasn't changed, just update the quantity
+        await setDoc(oldDocRef, {
+          quantity: quantityToAddNum,
+          name: itemUpp,
+          imageUrl: imageUrl,
+        }, { merge: true });
+      }
     }
-  
+    
     // Clear the form and update inventory
     setOldItemName("");
     setUpdateItemName("");
     setUpdateQuantityNumber("");
     await updateInventory();
-  };  
+  };
+   
   
 
   const handleUpdateOpen = (name, quantity) => {
