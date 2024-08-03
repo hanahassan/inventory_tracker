@@ -31,7 +31,8 @@ Check out the live demo of the project here:
 
 ## GitHub Repository
 
-Explore the code and contribute to the project on GitHub you can run it with `npm run dev`:
+Explore the code and contribute to the project on GitHub you can run it with 
+`npm run dev`
 [Inventory Tracker Repository](https://github.com/hanahassan/inventory_tracker)
 
 Feel free to reach out if you have any questions or suggestions!
