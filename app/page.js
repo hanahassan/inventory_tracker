@@ -17,6 +17,7 @@ export default function Home() {
   const [inventory, setInventory] = useState([]);
   const [open, setOpen] = useState(false);
   const [itemName, setItemName] = useState("");
+  const [containerHeight, setContainerHeight] = useState(20); // Initial height
 
   const updateInventory = async () => {
     const snapshot = query(collection(firestore, "inventory"));
@@ -29,6 +30,10 @@ export default function Home() {
       });
     });
     setInventory(inventoryList);
+
+    // Adjust the container height based on the number of items
+    const newHeight = Math.min(50 + inventoryList.length * 50, 300); // Increase height by 50px per item, max 300px
+    setContainerHeight(newHeight);
   };
 
   const removeItem = async (item) => {
@@ -77,7 +82,17 @@ export default function Home() {
       flexDirection="column"
       alignItems="center"
       gap={2}
+      bgcolor="#090b24"
     >
+      <Box width="1000px" height="100px" bgcolor="#13162e" display="flex" alignItems="center" justifyContent="space-between" px={5} border='1px solid #333'>
+        <Typography variant="h3" color='#bfbfbf'>Inventory Items</Typography>
+        <Button 
+            variant="contained"
+            sx={{ backgroundColor: '#464682' }}
+            onClick={() => {
+              handleOpen();
+            }}>Add New Item</Button> 
+      </Box>
       <Modal open={open} onClose={handleClose}>
         <Box
           position="absolute"
@@ -95,60 +110,70 @@ export default function Home() {
         >
           <Typography variant="h6">Add Item</Typography>
           <Stack width="100%" direction="row" spacing={2}>
-          <TextField
-            variant="outlined"
-            fullWidth
-            value={itemName}
-            onChange={(e) => {
-              setItemName(e.target.value)
-            }}>
-          </TextField>
-          <Button 
-            variant="outlined"
-            onClick={()=>{
-            addItem(itemName)
-            setItemName('')
-            handleClose()
-          }}>Add</Button>
-        </Stack>
+            <TextField
+              variant="outlined"
+              fullWidth
+              value={itemName}
+              onChange={(e) => {
+                setItemName(e.target.value);
+              }}>
+            </TextField>
+            <Button 
+              variant="outlined"
+              onClick={() => {
+                addItem(itemName);
+                setItemName('');
+                handleClose();
+              }}>Add</Button>
+          </Stack>
         </Box>
-      </Modal>
-      <Button 
-            variant="contained"
-            onClick={()=>{
-            handleOpen()
-          }}>Add New Item</Button>    
-      <Box border='1px solid #333'>
-        <Box width = "800px" height = "100px" bgcolor="#ADD8E6" display = "flex" alignItems="center" justifyContent="center">
-        <Typography variant="h2" color = '#333'>Inventory Items</Typography>
-      </Box>
-      <Stack width ='800px' height = '300px' spacing={2} overflow="auto">
-        { inventory.map(({name, quantity}) => (
-            <Box key={name} width="100%" minHeight="150px" display="flex" alignItems="center" justifyContent="space-between" bgcolor= '#f0f0f0' padding={5}>
-              <Typography variant = 'h3' color= '#333' textAlign='center'>
-              {name.charAt(0).toUpperCase() + name.slice(1)}</Typography>
-              <Typography variant = 'h3' color= '#333' textAlign='center'>
-              {quantity}</Typography>
+      </Modal> 
+      <Box border='1px solid #333' bgcolor="#13162e" pb="10px">
+        <Box width="582px" display="flex" flexDirection="row" justifyContent="space-between" px={4.8} pt={2} pb={2}>
+          <Typography variant='h4' color='#bfbfbf' textAlign='center'>
+            Item
+          </Typography>
+          <Typography variant='h4' color='#bfbfbf' textAlign='center' >
+            Quantity
+          </Typography>
+        </Box>
+        <Stack
+          width='1000px'
+          height={containerHeight}
+          spacing={2}
+          overflow="auto"
+          sx={{ transition: "height 0.5s ease-in-out" }}
+        >
+          {inventory.map(({ name, quantity }) => (
+            <Box key={name} width="100%" minHeight="50px" display="flex" alignItems="center" justifyContent="space-between" bgcolor='#13162e' px={5}>
+              <Typography variant='h5' color='#919191' textAlign='center' width="1px">
+                {name.charAt(0).toUpperCase() + name.slice(1)}
+              </Typography>
+              <Typography variant='h5' color='#919191' textAlign='center' pl={3}>
+                {quantity}
+              </Typography>
               <Stack direction="row" spacing={2}>
-              <Button 
-                variant = "contained" 
-                onClick={() => {
-                  addItem(name)
-                }} >
-                  Add
+                <Button 
+                  variant="contained" 
+                  sx={{ backgroundColor: '#464682' }}
+                  onClick={() => {
+                    addItem(name);
+                  }} >
+                    Add
                 </Button>
-              <Button 
-                variant = "contained" 
-                onClick={() => {
-                  removeItem(name)
-                }} >
-                  Remove
+                <Button 
+                  variant="contained" 
+                  sx={{ backgroundColor: '#464682' }}
+                  onClick={() => {
+                    removeItem(name);
+                  }} >
+                    Remove
                 </Button>
               </Stack>
             </Box>
           ))}
-      </Stack>
-      </Box>
+        </Stack>
+      </Box>  
     </Box>
   );
 }
